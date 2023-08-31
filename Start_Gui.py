@@ -171,6 +171,8 @@ start_button.pack(pady=20)
 
 # Menu Frame
 menu_frame = tk.Frame(root)
+back_button = tk.Button(menu_frame, text="←", command=go_back, fg="black", bg="blue", font=('Arial', 16), height=1, width=3)
+back_button.pack(anchor="nw", padx=10, pady=10)
 tk.Label(menu_frame, text="Input the Stock Code Below:", font=('Arial', 18)).pack(pady=2)
 stock_code_entry = tk.Entry(menu_frame, font=('Arial', 16), width=30)
 stock_code_entry.pack(pady=10)
