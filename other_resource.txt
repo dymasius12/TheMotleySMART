@@ -2,3 +2,4 @@ I learn much from this resource:
 https://github.com/ranaroussi/yfinance
 https://algotrading101.com/learn/yfinance-guide/
 https://matplotlib.org/stable/gallery/user_interfaces/embedding_in_tk_sgskip.html#sphx-glr-gallery-user-interfaces-embedding-in-tk-sgskip-py
+https://www.pythontutorial.net/tkinter/tkinter-matplotlib/
