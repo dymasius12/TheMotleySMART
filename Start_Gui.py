@@ -148,7 +148,7 @@ def go_back():
 
 # Main window
 root = tk.Tk()
-root.title("Welcome to The Motley S.M.A.R.T")
+root.title("The Motley S.M.A.R.T")
 root.geometry("800x500")
 root.resizable(False, False)
 
@@ -241,13 +241,6 @@ volume_info_label.grid(row=2, column=2, sticky="nw", padx=10, pady=10)
 tk.Label(dashboard_frame, text="Earnings Info", font=('Arial', 12, 'bold')).grid(row=3, column=2, sticky="nw", padx=10, pady=10)
 earnings_info_label = tk.Label(dashboard_frame, font=('Arial', 12), justify=tk.LEFT)
 earnings_info_label.grid(row=4, column=2, sticky="nw", padx=10, pady=10)
-
-# Configuring grid behavior in dashboard_frame
-dashboard_frame.grid_columnconfigure(0, weight=1)  # Left column
-dashboard_frame.grid_columnconfigure(1, weight=1)  # Middle column
-dashboard_frame.grid_columnconfigure(2, weight=1)  # Right column
-
-dashboard_frame.grid_rowconfigure(0, weight=1)  # Top row (for back button and company name)
 
 
 root.mainloop()
