@@ -1,6 +1,9 @@
 # The Motley S.M.A.R.T Stock Application
 
-![The Motley S.M.A.R.T Logo](logo_mid.png)
+![The Motley S.M.A.R.T Logo](logo_mid_white.png)
+
+## Quick Links
+- [Documentation](https://github.com/dymasius12/TheMotleySMART/blob/Main/Motley_SMART_Documentation.md) Full Documentation Page!
 
 ## Description
 The Motley S.M.A.R.T is a desktop application that provides insights and visualization for stocks, specifically the S&P 500 companies. With an intuitive interface, users can either select a company from a dropdown list or input a stock code directly to view comprehensive stock details or visualize stock price trends.
@@ -19,10 +22,10 @@ The Motley S.M.A.R.T is a desktop application that provides insights and visuali
   - Stock Analysis on Stock Parameters
   - Stock News
 
-  ![Landing page](Landing_Page.png)
-  ![Main Menu page](Main_Menu_Page.png)
-  ![Stock Dashboard page](Stock_Dashboard_Page.png)
-  ![Stock Graphical Visualization on Price page](Stock_Graphic_Page.png)
+![Landing page](Landing_Page.png)
+![Main Menu page](Main_Menu_Page.png)
+![Stock Dashboard page](Stock_Dashboard_Page.png)
+![Stock Graphical Visualization on Price page](Stock_Graphic_Page.png)
 
 ## Installation
 
