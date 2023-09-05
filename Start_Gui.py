@@ -175,7 +175,7 @@ root.resizable(False, False)
 style = ttk.Style()
 style.configure('TButton', font=('Arial', 23), borderwidth='4')
 style.map('TButton', background=[('active', 'cyan')])
-button_height = 50  # or any other value you prefer
+button_height = 25  # or any other value you prefer
 style.configure('TButton', padding=(0, button_height // 2, 0, button_height // 2))
 
 # Landing Frame
@@ -190,11 +190,37 @@ start_button.pack(pady=20)
 
 # Menu Frame
 menu_frame = tk.Frame(root)
+
+# Back button
 back_button = tk.Button(menu_frame, text="←", command=go_back, fg="black", bg="blue", font=('Arial', 16), height=1, width=3)
 back_button.pack(anchor="nw", padx=10, pady=10)
-tk.Label(menu_frame, text="Input the Stock Code Below:", font=('Arial', 18)).pack(pady=2)
+
+# Label for company dropdown
+tk.Label(menu_frame, text="Please choose the company name from the dropdown below:", font=('Arial', 18)).pack(pady=2)
+
+# Group by industries and create a list of companies for each industry with formatting
+industry_to_companies = {}
+formatted_dropdown_values = []
+for industry, group in sp500_companies_df.groupby('GICS Sector'):
+    industry_to_companies[industry] = group['Security'].tolist()
+    formatted_dropdown_values.append(f"--{industry} Industry--")
+    formatted_dropdown_values.extend(group['Security'].tolist())
+
+# Create the dropdown for company names
+company_dropdown = ttk.Combobox(menu_frame, values=formatted_dropdown_values, font=('Arial', 16), width=30)
+company_dropdown.pack(pady=10)
+
+# Bind the dropdown select event
+company_dropdown.bind("<<ComboboxSelected>>", on_company_dropdown_select)
+
+# Label for stock code entry
+tk.Label(menu_frame, text="OR please input the stock code below:", font=('Arial', 18)).pack(pady=2)
+
+# Stock code entry
 stock_code_entry = tk.Entry(menu_frame, font=('Arial', 16), width=30)
 stock_code_entry.pack(pady=10)
+
+# Label and Listbox for menu options
 tk.Label(menu_frame, text="Choose the Menu Option Below:", font=('Arial', 18)).pack(pady=2)
 menu_listbox = tk.Listbox(menu_frame, font=('Arial', 16), width=30, height=5)
 menu_listbox.insert(1, "1. Stock Dashboard")
@@ -203,8 +229,10 @@ menu_listbox.insert(3, "3. Stock Analysis on Stock Parameters")
 menu_listbox.insert(4, "4. Stock News")
 menu_listbox.insert(5, "5. Exit Program")
 menu_listbox.pack(pady=10)
+
+# Search button
 confirm_button = ttk.Button(menu_frame, text="Search Stock", command=confirm_choice, style='TButton', width=15)
-confirm_button.pack(pady=10)
+confirm_button.pack(pady=20)
 
 # Dashboard Frame
 dashboard_frame = tk.Frame(root)
@@ -259,23 +287,6 @@ volume_info_label.grid(row=2, column=2, sticky="nw", padx=10, pady=10)
 tk.Label(dashboard_frame, text="Earnings Info", font=('Arial', 12, 'bold')).grid(row=3, column=2, sticky="nw", padx=10, pady=10)
 earnings_info_label = tk.Label(dashboard_frame, font=('Arial', 12), justify=tk.LEFT)
 earnings_info_label.grid(row=4, column=2, sticky="nw", padx=10, pady=10)
-
-# Group by industries and create a list of companies for each industry
-industry_to_companies = {}
-for industry, group in sp500_companies_df.groupby('GICS Sector'):
-    industry_to_companies[industry] = group['Security'].tolist()
-
-# Create a dropdown (ComboBox) for company names, organized by industry
-company_dropdown_values = []
-for industry, companies in industry_to_companies.items():
-    company_dropdown_values.append(industry)
-    company_dropdown_values.extend(companies)
-
-company_dropdown = ttk.Combobox(root, values=company_dropdown_values)
-company_dropdown.pack(pady=20, before=stock_code_entry)
-
-# Bind the dropdown select event
-company_dropdown.bind("<<ComboboxSelected>>", on_company_dropdown_select)
 
 root.mainloop()
 
