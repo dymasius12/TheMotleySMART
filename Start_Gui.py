@@ -3,6 +3,28 @@ import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox
 import yfinance as yf
 import matplotlib.pyplot as plt
+import pandas as pd
+
+# Fetching S&P 500 Companies Using pandas_datareader
+def fetch_sp500_companies():
+    url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+    tables = pd.read_html(url, header=0)
+    sp500_companies = tables[0]
+    return sp500_companies
+
+sp500_companies_df = fetch_sp500_companies()
+company_name_to_ticker = dict(zip(sp500_companies_df['Security'], sp500_companies_df['Symbol']))
+
+def on_company_dropdown_select(event):
+    """Update the stock_code_entry with the ticker when a company is selected from the dropdown."""
+    # Get the selected company or industry
+    selected_value = company_dropdown.get()
+    
+    # If the selected value is a company (not an industry), update the entry field with its ticker
+    ticker = company_name_to_ticker.get(selected_value)
+    if ticker:
+        stock_code_entry.delete(0, tk.END)
+        stock_code_entry.insert(0, ticker)
 
 def get_stock_data(ticker):
     """Fetch stock data using yfinance."""
@@ -12,10 +34,13 @@ def get_stock_data(ticker):
 
 def display_stock_dashboard():
     """Display comprehensive stock info within the main application window."""
-    ticker = stock_code_entry.get()
-    if not ticker:
-        messagebox.showerror("Error", "Please enter a stock code.")
+    input_value = stock_code_entry.get()
+    if not input_value:
+        messagebox.showerror("Error", "Please enter a stock code or company name.")
         return
+
+    # Check if input is a company name, and if so, get the corresponding ticker
+    ticker = company_name_to_ticker.get(input_value, input_value)
     
     try:
         _, stock = get_stock_data(ticker)
@@ -25,8 +50,6 @@ def display_stock_dashboard():
         company_name_label.config(text=info['shortName'])
 
         # Formatting the information into categories
-
-        # Left: General and Financial Info
         general_info = (
             f"Name: {info['shortName']}\n"
             f"Sector: {info.get('sector', 'N/A')}\n"
@@ -40,8 +63,6 @@ def display_stock_dashboard():
             f"Price-to-Book: {info.get('priceToBook', 'N/A')}\n"
             f"Trailing EPS: {info.get('trailingEps', 'N/A')}\n\n"
         )
-
-        # Middle: Trading and Dividend Info
         trading_info = (
             f"52 Week High: {info['fiftyTwoWeekHigh']}\n"
             f"52 Week Low: {info['fiftyTwoWeekLow']}\n"
@@ -53,8 +74,6 @@ def display_stock_dashboard():
             f"Dividend Yield: {info.get('dividendYield', 'N/A')}\n"
             f"Ex-Dividend Date: {info.get('exDividendDate', 'N/A')}\n\n"
         )
-
-        # Right: Volume, Earnings, Balance Sheet, and Miscellaneous Info
         volume_info = (
             f"Average Volume: {info.get('averageVolume', 'N/A')}\n"
             f"Volume: {info.get('volume', 'N/A')}\n"
@@ -162,8 +181,8 @@ style.configure('TButton', padding=(0, button_height // 2, 0, button_height // 2
 # Landing Frame
 landing_frame = tk.Frame(root)
 landing_frame.pack(fill=tk.BOTH, expand=True)
-logo_image = tk.PhotoImage(file="logo_mid.png")
-logo_small_image = tk.PhotoImage(file="logo.png")
+logo_image = tk.PhotoImage(file="logo_mid.png")  # Ensure you have this image in the same directory or provide the full path
+logo_small_image = tk.PhotoImage(file="logo.png")  # Ensure you have this image in the same directory or provide the full path
 tk.Label(landing_frame, image=logo_image).pack(pady=20)
 tk.Label(landing_frame, text="Stock Application", font=('Arial', 24)).pack(pady=20)
 start_button = ttk.Button(landing_frame, text="Start", command=start_program, style='TButton', width=10) #Start Button
@@ -199,7 +218,6 @@ logo_label = tk.Label(dashboard_frame, image=logo_small_image)
 logo_label.grid(row=6, column=2, sticky="se", padx=0, pady=3)
 
 # LEFT SIDE
-
 # General Info
 tk.Label(dashboard_frame, text="General Info", font=('Arial', 12, 'bold')).grid(row=1, column=0, sticky="nw", padx=10, pady=10)
 general_info_label = tk.Label(dashboard_frame, font=('Arial', 12), justify=tk.LEFT)
@@ -216,7 +234,6 @@ balance_sheet_info_label = tk.Label(dashboard_frame, font=('Arial', 12), justify
 balance_sheet_info_label.grid(row=6, column=0, sticky="nw", padx=10, pady=10)
 
 # MIDDLE
-
 # Trading Info
 tk.Label(dashboard_frame, text="Trading Info", font=('Arial', 12, 'bold')).grid(row=1, column=1, sticky="nw", padx=10, pady=10)
 trading_info_label = tk.Label(dashboard_frame, font=('Arial', 12), justify=tk.LEFT)
@@ -233,7 +250,6 @@ miscellaneous_info_label = tk.Label(dashboard_frame, font=('Arial', 12), justify
 miscellaneous_info_label.grid(row=6, column=1, sticky="nw", padx=10, pady=10)
 
 # RIGHT SIDE
-
 # Volume Info
 tk.Label(dashboard_frame, text="Volume Info", font=('Arial', 12, 'bold')).grid(row=1, column=2, sticky="nw", padx=10, pady=10)
 volume_info_label = tk.Label(dashboard_frame, font=('Arial', 12), justify=tk.LEFT)
@@ -244,5 +260,22 @@ tk.Label(dashboard_frame, text="Earnings Info", font=('Arial', 12, 'bold')).grid
 earnings_info_label = tk.Label(dashboard_frame, font=('Arial', 12), justify=tk.LEFT)
 earnings_info_label.grid(row=4, column=2, sticky="nw", padx=10, pady=10)
 
+# Group by industries and create a list of companies for each industry
+industry_to_companies = {}
+for industry, group in sp500_companies_df.groupby('GICS Sector'):
+    industry_to_companies[industry] = group['Security'].tolist()
+
+# Create a dropdown (ComboBox) for company names, organized by industry
+company_dropdown_values = []
+for industry, companies in industry_to_companies.items():
+    company_dropdown_values.append(industry)
+    company_dropdown_values.extend(companies)
+
+company_dropdown = ttk.Combobox(root, values=company_dropdown_values)
+company_dropdown.pack(pady=20, before=stock_code_entry)
+
+# Bind the dropdown select event
+company_dropdown.bind("<<ComboboxSelected>>", on_company_dropdown_select)
 
 root.mainloop()
+
