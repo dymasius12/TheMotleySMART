@@ -3,9 +3,7 @@ import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox
 import yfinance as yf
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
-import numpy as np
 
 # Fetching S&P 500 Companies Using pandas_datareader
 def fetch_sp500_companies():
@@ -111,19 +109,6 @@ def display_stock_dashboard():
         # Hide the menu_frame and show the dashboard_frame
         menu_frame.pack_forget()
         dashboard_frame.pack(fill=tk.BOTH, expand=True)
-
-        # Plotting the stock's closing price over the past year
-        fig, ax = plt.subplots(figsize=(5,3))
-        data['Close'].plot(ax=ax)
-        ax.set_title(f"Closing Price of {info['shortName']} Over the Past Year")
-        ax.set_xlabel("Date")
-        ax.set_ylabel("Closing Price")
-
-        # Embedding the matplotlib plot in the tkinter window
-        canvas = FigureCanvasTkAgg(fig, master=dashboard_frame)
-        canvas_widget = canvas.get_tk_widget()
-        canvas_widget.grid(row=2, column=1, padx=10, pady=10) # Adjust the grid positioning as needed
-        canvas.draw()
         
     except Exception as e:
         messagebox.showerror("Error", f"Error fetching data for {ticker}: {str(e)}")
@@ -145,72 +130,6 @@ def display_stock_price_vs_time():
     except Exception as e:
         messagebox.showerror("Error", f"Error fetching data for {ticker}: {str(e)}")
 
-def monte_carlo_simulation(ticker, num_simulations=1000, num_days=252):
-    """Run a Monte Carlo simulation for future stock prices."""
-    
-    # Fetch historical data
-    data, _ = get_stock_data(ticker)
-    
-    # Calculate daily returns
-    returns = data['Close'].pct_change().dropna()
-    
-    # Calculate mean and standard deviation of daily returns
-    mu = returns.mean()
-    sigma = returns.std()
-    
-    # Initialize array for simulations
-    simulations = np.zeros((num_days, num_simulations))
-    
-    # Set first row of simulations to the last closing price
-    simulations[0] = data['Close'].iloc[-1]
-    
-    # Simulate future stock prices
-    for simulation in range(num_simulations):
-        for day in range(1, num_days):
-            simulations[day, simulation] = (simulations[day - 1, simulation]
-                                            * (1 + np.random.normal(mu, sigma)))
-    
-    # Compute the average path
-    average_path = np.mean(simulations, axis=1)
-    
-    return simulations, average_path
-
-def display_monte_carlo_simulation():
-    """Display the results of the Monte Carlo simulation."""
-    
-    ticker = stock_code_entry.get()
-    if not ticker:
-        messagebox.showerror("Error", "Please enter a stock code.")
-        return
-    
-    try:
-        simulations, average_path = monte_carlo_simulation(ticker)
-        
-        # Compute the 2.5th and 97.5th percentiles
-        upper_bound = np.percentile(simulations, 95, axis=1)
-        lower_bound = np.percentile(simulations, 5, axis=1)
-        
-        plt.figure(figsize=(10,5))
-        for i in range(simulations.shape[1]):
-            plt.plot(simulations[:, i], color='gray', alpha=0.1)
-        
-        # Plot the average path in blue
-        plt.plot(average_path, color='blue', label='Average Path')
-            
-        # Plot the upper and lower bounds of the 90% confidence interval
-        plt.plot(upper_bound, color='red', label='95th Percentile')
-        plt.plot(lower_bound, color='red', label='5th Percentile')
-            
-        plt.title(f"{ticker} Monte Carlo Simulation of Stock Prices with 90% Confidence Interval")
-        plt.xlabel("Days")
-        plt.ylabel("Simulated Stock Price")
-        plt.legend()
-        plt.grid(True)
-        plt.show()
-        
-    except Exception as e:
-        messagebox.showerror("Error", f"Error running Monte Carlo simulation for {ticker}: {str(e)}")
-
 def start_program():
     landing_frame.pack_forget()
     menu_frame.pack(fill=tk.BOTH, expand=True)
@@ -230,9 +149,7 @@ def confirm_choice():
     elif choice == 3:  # Stock News
         # Placeholder for future implementation
         messagebox.showinfo("Info", "This feature is not yet implemented.")
-    elif choice == 4:  # Monte Carlo Simulation
-        display_monte_carlo_simulation()
-    elif choice == 5:  # Exit Program
+    elif choice == 4:  # Exit Program
         exit_program()
 
 def exit_program():
@@ -310,8 +227,7 @@ menu_listbox.insert(1, "1. Stock Dashboard")
 menu_listbox.insert(2, "2. Display Stock Price vs Time Graph")
 menu_listbox.insert(3, "3. Stock Analysis on Stock Parameters")
 menu_listbox.insert(4, "4. Stock News")
-menu_listbox.insert(5, "5. Monte Carlo Simulation of Stock Prices")
-menu_listbox.insert(6, "6. Exit Program")
+menu_listbox.insert(5, "5. Exit Program")
 menu_listbox.pack(pady=10)
 
 # Search button

@@ -169,11 +169,8 @@ def monte_carlo_simulation(ticker, num_simulations=1000, num_days=252):
         for day in range(1, num_days):
             simulations[day, simulation] = (simulations[day - 1, simulation]
                                             * (1 + np.random.normal(mu, sigma)))
-    
-    # Compute the average path
-    average_path = np.mean(simulations, axis=1)
-    
-    return simulations, average_path
+            
+    return simulations
 
 def display_monte_carlo_simulation():
     """Display the results of the Monte Carlo simulation."""
@@ -184,24 +181,21 @@ def display_monte_carlo_simulation():
         return
     
     try:
-        simulations, average_path = monte_carlo_simulation(ticker)
+        simulations = monte_carlo_simulation(ticker)
         
         # Compute the 2.5th and 97.5th percentiles
-        upper_bound = np.percentile(simulations, 95, axis=1)
-        lower_bound = np.percentile(simulations, 5, axis=1)
+        upper_bound = np.percentile(simulations, 97.5, axis=1)
+        lower_bound = np.percentile(simulations, 2.5, axis=1)
         
         plt.figure(figsize=(10,5))
         for i in range(simulations.shape[1]):
             plt.plot(simulations[:, i], color='gray', alpha=0.1)
-        
-        # Plot the average path in blue
-        plt.plot(average_path, color='blue', label='Average Path')
             
-        # Plot the upper and lower bounds of the 90% confidence interval
-        plt.plot(upper_bound, color='red', label='95th Percentile')
-        plt.plot(lower_bound, color='red', label='5th Percentile')
+        # Plot the upper and lower bounds of the 95% confidence interval
+        plt.plot(upper_bound, color='red', label='97.5th Percentile')
+        plt.plot(lower_bound, color='red', label='2.5th Percentile')
             
-        plt.title(f"{ticker} Monte Carlo Simulation of Stock Prices with 90% Confidence Interval")
+        plt.title(f"{ticker} Monte Carlo Simulation of Stock Prices with 95% Confidence Interval")
         plt.xlabel("Days")
         plt.ylabel("Simulated Stock Price")
         plt.legend()
