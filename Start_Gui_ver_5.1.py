@@ -215,42 +215,8 @@ def analyze_stock_parameters(stock_info):
     
     return analysis_results
 
-def plot_time_series_analysis(analysis_window, stock):
-    """Adjusted function to plot Profitability, Stability, and Credibility vs. time with an improved legend."""
-    # Extracting historical data
-    history = stock.history(period="1y")
-    
-    # Mock data for these parameters
-    history['Profitability'] = history['Close'] / history['Close'].max()  # Mock data for RoE
-    history['Stability'] = 1 + 0.2 * (history['Close'].pct_change())     # Mock data for Beta
-    history['Credibility'] = history['Volume'] / history['Volume'].max()  # Mock data for Debt Ratio
-
-    # Plotting the parameters vs. time
-    fig, ax = plt.subplots(figsize=(10, 5))
-    history['Profitability'].plot(ax=ax, color='green', label='Profitability (RoE)')
-    history['Stability'].plot(ax=ax, color='blue', label='Stability (Beta)')
-    history['Credibility'].plot(ax=ax, color='orange', label='Credibility (Debt Ratio)')
-    
-    # Adding threshold lines
-    ax.axhline(0.12, color='grey', linestyle='--', label='Profitability Threshold (12%)')
-    ax.axhline(1.3, color='grey', linestyle='--', label='Upper Stability Threshold (1.3)')
-    ax.axhline(0.8, color='grey', linestyle='--', label='Lower Stability & Credibility Threshold (0.8)')
-
-    ax.set_title("Profitability, Stability, and Credibility vs. Time")
-    ax.set_ylabel('Value')
-    ax.set_xlabel('Date')
-    
-    # Adjusting the legend to be outside the plot
-    ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
-
-    # Embed the plot in the tkinter window
-    canvas = FigureCanvasTkAgg(fig, master=analysis_window)
-    canvas_widget = canvas.get_tk_widget()
-    canvas_widget.grid(row=6, column=0, padx=10, pady=10)
-    canvas.draw()
-
 def display_stock_analysis():
-    """Display the enhanced stock analysis results in a new window with a time-series graph."""
+    """Display the enhanced stock analysis results in a new window."""
     input_value = stock_code_entry.get()
     if not input_value:
         messagebox.showerror("Error", "Please enter a stock code or company name.")
@@ -264,16 +230,13 @@ def display_stock_analysis():
 
     # Create a new window to display the results
     analysis_window = tk.Toplevel(root)
-    analysis_window.title("Stock Analysis Results with Time-Series Graph")
+    analysis_window.title("Stock Analysis Results")
 
     # Display the results in labels
     for i, (parameter, (result, description)) in enumerate(analysis_results.items()):
         color = "green" if "✅" in result else "red"
         tk.Label(analysis_window, text=f"{parameter}: {result}", font=('Arial', 12), fg=color).grid(row=2*i, column=0, padx=10, pady=5)
         tk.Label(analysis_window, text=f"{description}", font=('Arial', 10), fg=color).grid(row=2*i+1, column=0, padx=10, pady=5)
-
-    # Plot the time-series graph using the adjusted function
-    plot_time_series_analysis(analysis_window, stock)
 
     analysis_window.mainloop()
 

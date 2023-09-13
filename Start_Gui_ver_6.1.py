@@ -216,11 +216,11 @@ def analyze_stock_parameters(stock_info):
     return analysis_results
 
 def plot_time_series_analysis(analysis_window, stock):
-    """Adjusted function to plot Profitability, Stability, and Credibility vs. time with an improved legend."""
-    # Extracting historical data
+    """Plot Profitability, Stability, and Credibility vs. time."""
+    # Extracting historical data (assuming this is possible from the Yahoo Finance API)
     history = stock.history(period="1y")
     
-    # Mock data for these parameters
+    # Mock data for these parameters, as the real API might not provide them
     history['Profitability'] = history['Close'] / history['Close'].max()  # Mock data for RoE
     history['Stability'] = 1 + 0.2 * (history['Close'].pct_change())     # Mock data for Beta
     history['Credibility'] = history['Volume'] / history['Volume'].max()  # Mock data for Debt Ratio
@@ -239,9 +239,7 @@ def plot_time_series_analysis(analysis_window, stock):
     ax.set_title("Profitability, Stability, and Credibility vs. Time")
     ax.set_ylabel('Value')
     ax.set_xlabel('Date')
-    
-    # Adjusting the legend to be outside the plot
-    ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+    ax.legend()
 
     # Embed the plot in the tkinter window
     canvas = FigureCanvasTkAgg(fig, master=analysis_window)
@@ -272,7 +270,7 @@ def display_stock_analysis():
         tk.Label(analysis_window, text=f"{parameter}: {result}", font=('Arial', 12), fg=color).grid(row=2*i, column=0, padx=10, pady=5)
         tk.Label(analysis_window, text=f"{description}", font=('Arial', 10), fg=color).grid(row=2*i+1, column=0, padx=10, pady=5)
 
-    # Plot the time-series graph using the adjusted function
+    # Plot the time-series graph
     plot_time_series_analysis(analysis_window, stock)
 
     analysis_window.mainloop()
