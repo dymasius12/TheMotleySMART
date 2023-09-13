@@ -45,7 +45,7 @@ def display_stock_dashboard():
     ticker = company_name_to_ticker.get(input_value, input_value)
     
     try:
-        _, stock = get_stock_data(ticker)
+        data, stock = get_stock_data(ticker)
         info = stock.info
 
         # Set company name at the top center
