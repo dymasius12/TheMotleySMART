@@ -16,18 +16,19 @@ The Motley S.M.A.R.T is a desktop application that provides insights and visuali
   - Financial Info
   - Volume Info
   - Earnings Info
-  - And more!
+  - Get recent 30 days stock news from internet
+  - Stock Analysis using Profitability, Stability, Credibility parameters
+  - Monte Carlo Simulation for Risk Analysis on Live Stock price
 - **Stock Price vs. Time Graph**: Visualize the stock's closing prices over time.
 - **(Upcoming Features)**:
-  - Stock Analysis on Stock Parameters
-  - Stock News
+  - Sentiment Analysis on Live Stock News using Python
 
 ![Landing page](Landing_Page.png)
 ![Main Menu page](Main_Menu_Page.png)
 ![Stock Dashboard page](Stock_Dashboard_Page.png)
 ![Stock Graphical Visualization on Price page](Stock_Graphic_Page.png)
-![Monte Carlo Simulaiton on Live Stock](Monte_Carlo_Simulation.PNG)
-![Live Stock News](Stock_News.PNG)
+![Monte Carlo Simulaiton on Live Stock](Monte_Carlo_Simulation.png)
+![Live Stock News](Stock_News.png)
 
 ## Installation
 
