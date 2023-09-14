@@ -216,37 +216,36 @@ def analyze_stock_parameters(stock_info):
     return analysis_results
 
 def plot_time_series_analysis(analysis_window, stock):
-    """Adjusted function to plot Profitability, Stability, and Credibility vs. time with an improved legend."""
+    """Adjusted function to fit the graph more compactly within the window."""
     # Extracting historical data
     history = stock.history(period="1y")
     
     # Mock data for these parameters
-    history['Profitability'] = history['Close'] / history['Close'].max()  # Mock data for RoE
-    history['Stability'] = 1 + 0.2 * (history['Close'].pct_change())     # Mock data for Beta
-    history['Credibility'] = history['Volume'] / history['Volume'].max()  # Mock data for Debt Ratio
+    history['Profitability'] = history['Close'] / history['Close'].max()
+    history['Stability'] = 1 + 0.2 * (history['Close'].pct_change())
+    history['Credibility'] = history['Volume'] / history['Volume'].max()
 
-    # Plotting the parameters vs. time
-    fig, ax = plt.subplots(figsize=(10, 5))
+    # Plotting
+    fig, ax = plt.subplots(figsize=(8, 4))
     history['Profitability'].plot(ax=ax, color='green', label='Profitability (RoE)')
     history['Stability'].plot(ax=ax, color='blue', label='Stability (Beta)')
     history['Credibility'].plot(ax=ax, color='orange', label='Credibility (Debt Ratio)')
     
     # Adding threshold lines
-    ax.axhline(0.12, color='grey', linestyle='--', label='Profitability Threshold (12%)')
-    ax.axhline(1.3, color='grey', linestyle='--', label='Upper Stability Threshold (1.3)')
-    ax.axhline(0.8, color='grey', linestyle='--', label='Lower Stability & Credibility Threshold (0.8)')
+    ax.axhline(0.12, color='lightgreen', linestyle='--', label='Profitability Threshold (12%)')
+    ax.axhline(1.3, color='lightblue', linestyle='--', label='Upper Stability Threshold (1.3)')
+    ax.axhline(0.9, color='lightblue', linestyle='--', label='Lower Stability & Credibility Threshold (0.8)')
+    ax.axhline(0.8, color='moccasin', linestyle='--', label='Credibility Threshold (0.8)')
 
     ax.set_title("Profitability, Stability, and Credibility vs. Time")
     ax.set_ylabel('Value')
     ax.set_xlabel('Date')
-    
-    # Adjusting the legend to be outside the plot
-    ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.25), ncol=4)  # Adjusting legend positioning
 
-    # Embed the plot in the tkinter window
+    # Embedding in the tkinter window
     canvas = FigureCanvasTkAgg(fig, master=analysis_window)
     canvas_widget = canvas.get_tk_widget()
-    canvas_widget.grid(row=6, column=0, padx=10, pady=10)
+    canvas_widget.grid(row=7, column=0, padx=10, pady=10)
     canvas.draw()
 
 def display_stock_analysis():
@@ -259,21 +258,45 @@ def display_stock_analysis():
     _, stock = get_stock_data(ticker)
     info = stock.info
 
-    # Analyze the stock
+    # Analyzing the stock
     analysis_results = analyze_stock_parameters(info)
 
-    # Create a new window to display the results
+    # Creating a new window
     analysis_window = tk.Toplevel(root)
     analysis_window.title("Stock Analysis Results with Time-Series Graph")
+    analysis_window.geometry("800x600")
 
-    # Display the results in labels
+    # Configuring grid weights to ensure scrollbar placement
+    analysis_window.grid_rowconfigure(0, weight=1)
+    analysis_window.grid_columnconfigure(0, weight=1)
+
+    # Adding scrollbars
+    xscrollbar = tk.Scrollbar(analysis_window, orient='horizontal')
+    xscrollbar.grid(row=1, column=0, sticky='ew')
+
+    yscrollbar = tk.Scrollbar(analysis_window)
+    yscrollbar.grid(row=0, column=1, sticky='ns')
+
+    canvas = tk.Canvas(analysis_window, bd=0, xscrollcommand=xscrollbar.set, yscrollcommand=yscrollbar.set)
+    canvas.grid(row=0, column=0, sticky='nsew')
+
+    xscrollbar.config(command=canvas.xview)
+    yscrollbar.config(command=canvas.yview)
+
+    analysis_frame = tk.Frame(canvas)
+    canvas.create_window((0, 0), window=analysis_frame, anchor="nw")
+
+    # Displaying results in labels
     for i, (parameter, (result, description)) in enumerate(analysis_results.items()):
         color = "green" if "✅" in result else "red"
-        tk.Label(analysis_window, text=f"{parameter}: {result}", font=('Arial', 12), fg=color).grid(row=2*i, column=0, padx=10, pady=5)
-        tk.Label(analysis_window, text=f"{description}", font=('Arial', 10), fg=color).grid(row=2*i+1, column=0, padx=10, pady=5)
+        tk.Label(analysis_frame, text=f"{parameter}: {result}", font=('Arial', 12), fg=color).grid(row=2*i, column=0, padx=10, pady=5)
+        tk.Label(analysis_frame, text=f"{description}", font=('Arial', 10), fg=color).grid(row=2*i+1, column=0, padx=10, pady=5)
 
-    # Plot the time-series graph using the adjusted function
-    plot_time_series_analysis(analysis_window, stock)
+    # Plotting the time-series graph
+    plot_time_series_analysis(analysis_frame, stock)
+
+    analysis_frame.update_idletasks()
+    canvas.config(scrollregion=canvas.bbox("all"))
 
     analysis_window.mainloop()
 
