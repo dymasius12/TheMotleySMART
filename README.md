@@ -26,6 +26,8 @@ The Motley S.M.A.R.T is a desktop application that provides insights and visuali
 ![Main Menu page](Main_Menu_Page.png)
 ![Stock Dashboard page](Stock_Dashboard_Page.png)
 ![Stock Graphical Visualization on Price page](Stock_Graphic_Page.png)
+![Monte Carlo Simulaiton on Live Stock](Monte_Carlo_Simulation.PNG)
+![Live Stock News](Stock_News.PNG)
 
 ## Installation
 
