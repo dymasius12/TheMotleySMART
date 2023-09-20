@@ -34,30 +34,27 @@ def on_company_dropdown_select(event):
 def get_stock_data(ticker):
     """Fetch stock data using yfinance."""
     stock = yf.Ticker(ticker)
-    if not stock.info:
-        raise ValueError(f"Invalid stock code: {ticker}")
     data = stock.history(period="1y")
     return data, stock
 
 def display_stock_dashboard():
-    """Display a comprehensive dashboard with stock details in the application window."""
-    
-    # 1. Get the stock ticker or company name from the user input
+    """Display comprehensive stock info within the main application window."""
     input_value = stock_code_entry.get()
     if not input_value:
         messagebox.showerror("Error", "Please enter a stock code or company name.")
         return
 
-    # Convert company name to ticker if necessary
+    # Check if input is a company name, and if so, get the corresponding ticker
     ticker = company_name_to_ticker.get(input_value, input_value)
     
     try:
         data, stock = get_stock_data(ticker)
         info = stock.info
 
-        # 2. Organize and format stock details for display
+        # Set company name at the top center
         company_name_label.config(text=info['shortName'])
-        
+
+        # Formatting the information into categories
         general_info = (
             f"Name: {info['shortName']}\n"
             f"Sector: {info.get('sector', 'N/A')}\n"
@@ -65,45 +62,38 @@ def display_stock_dashboard():
             f"Country: {info.get('country', 'N/A')}\n"
             f"Website: {info.get('website', 'N/A')}\n\n"
         )
-        
         financial_info = (
             f"Market Cap: {info.get('marketCap', 'N/A')}\n"
             f"Forward P/E: {info.get('forwardPE', 'N/A')}\n"
             f"Price-to-Book: {info.get('priceToBook', 'N/A')}\n"
             f"Trailing EPS: {info.get('trailingEps', 'N/A')}\n\n"
         )
-        
         trading_info = (
             f"52 Week High: {info['fiftyTwoWeekHigh']}\n"
             f"52 Week Low: {info['fiftyTwoWeekLow']}\n"
             f"50 Day Average: {info.get('fiftyDayAverage', 'N/A')}\n"
             f"200 Day Average: {info.get('twoHundredDayAverage', 'N/A')}\n\n"
         )
-        
         dividend_info = (
             f"Dividend Rate: {info.get('dividendRate', 'N/A')}\n"
             f"Dividend Yield: {info.get('dividendYield', 'N/A')}\n"
             f"Ex-Dividend Date: {info.get('exDividendDate', 'N/A')}\n\n"
         )
-        
         volume_info = (
             f"Average Volume: {info.get('averageVolume', 'N/A')}\n"
             f"Volume: {info.get('volume', 'N/A')}\n"
             f"Last Volume: {info.get('lastVolume', 'N/A')}\n\n"
         )
-        
         earnings_info = (
             f"Earnings Quarterly Growth: {info.get('earningsQuarterlyGrowth', 'N/A')}\n"
             f"Trailing Annual Dividend Rate: {info.get('trailingAnnualDividendRate', 'N/A')}\n\n"
         )
-        
         balance_sheet_info = (
             f"Total Cash: {info.get('totalCash', 'N/A')}\n"
             f"Total Debt: {info.get('totalDebt', 'N/A')}\n"
             f"Quick Ratio: {info.get('quickRatio', 'N/A')}\n"
             f"Current Ratio: {info.get('currentRatio', 'N/A')}\n\n"
         )
-        
         miscellaneous_info = (
             f"Beta: {info.get('beta', 'N/A')}\n"
             f"Book Value: {info.get('bookValue', 'N/A')}\n"
@@ -111,7 +101,7 @@ def display_stock_dashboard():
             f"Is ESG Populated: {info.get('isEsgPopulated', 'N/A')}\n"
         )
 
-        # 3. Update the UI elements with the prepared stock details
+        # Update labels with fetched data
         general_info_label.config(text=general_info)
         financial_info_label.config(text=financial_info)
         trading_info_label.config(text=trading_info)
@@ -121,7 +111,7 @@ def display_stock_dashboard():
         balance_sheet_info_label.config(text=balance_sheet_info)
         miscellaneous_info_label.config(text=miscellaneous_info)
 
-        # 4. Toggle the UI frames to display the stock details
+        # Hide the menu_frame and show the dashboard_frame
         menu_frame.pack_forget()
         dashboard_frame.pack(fill=tk.BOTH, expand=True)
         
