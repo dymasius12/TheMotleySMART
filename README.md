@@ -1,4 +1,5 @@
 # The Motley S.M.A.R.T Stock Application
+Please read the Installation and How To Run
 
 ![The Motley S.M.A.R.T Logo](logo_mid_white.png)
 
@@ -30,7 +31,7 @@ The Motley S.M.A.R.T is a desktop application that provides insights and visuali
 ![Monte Carlo Simulaiton on Live Stock](Monte_Carlo_Simulation.png)
 ![Live Stock News](Stock_News.png)
 
-## Installation
+## Installation & How To Run!!!
 
 1. Ensure you have Python (>= 3.7) installed on your system.
 2. Clone this repository:

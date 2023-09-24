@@ -7,10 +7,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 import numpy as np
 from newsapi import NewsApiClient
+from config import API_KEY
 import datetime
-
-#Define API_KEY
-API_KEY = "7a285b0c044f4c2b96bc5e18c1b58f3d"
 
 # Fetching S&P 500 Companies Using pandas_datareader
 def fetch_sp500_companies():
@@ -246,10 +244,10 @@ def plot_time_series_analysis(analysis_window, stock):
     # Adding threshold lines
     ax.axhline(0.12, color='lightgreen', linestyle='--', label='Profitability Threshold (12%)')
     ax.axhline(1.3, color='lightblue', linestyle='--', label='Upper Stability Threshold (1.3)')
-    ax.axhline(0.8, color='lightblue', linestyle='--', label='Lower Stability & Credibility Threshold (0.8)')
+    ax.axhline(0.9, color='lightblue', linestyle='--', label='Lower Stability & Credibility Threshold (0.8)')
     ax.axhline(0.8, color='moccasin', linestyle='--', label='Credibility Threshold (0.8)')
 
-    ax.set_title("Profitability (Green), Stability (Blue), and Credibility (Yellow) vs. Time")
+    ax.set_title("Profitability, Stability, and Credibility vs. Time")
     ax.set_ylabel('Value')
     ax.set_xlabel('Date')
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.25), ncol=4)  # Adjusting legend positioning
@@ -357,7 +355,6 @@ def display_monte_carlo_simulation():
         upper_bound = np.percentile(simulations, 95, axis=1)
         lower_bound = np.percentile(simulations, 5, axis=1)
         
-        plt.close('all')  # Close all existing figure windows
         plt.figure(figsize=(10,5))
         for i in range(simulations.shape[1]):
             plt.plot(simulations[:, i], color='gray', alpha=0.1)
@@ -378,7 +375,6 @@ def display_monte_carlo_simulation():
         
     except Exception as e:
         messagebox.showerror("Error", f"Error running Monte Carlo simulation for {ticker}: {str(e)}")
-
 
 def start_program():
     landing_frame.pack_forget()

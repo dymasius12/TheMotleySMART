@@ -7,10 +7,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 import numpy as np
 from newsapi import NewsApiClient
+from config import API_KEY
 import datetime
-
-#Define API_KEY
-API_KEY = "7a285b0c044f4c2b96bc5e18c1b58f3d"
 
 # Fetching S&P 500 Companies Using pandas_datareader
 def fetch_sp500_companies():
